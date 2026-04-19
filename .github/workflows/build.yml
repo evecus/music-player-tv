@@ -33,12 +33,35 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      # ── 4. Grant execute permission ──────────────────────
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      # ── 4. Bootstrap gradle-wrapper.jar ──────────────────
+      # gradle-wrapper.jar is a binary not committed to repo.
+      # Install system Gradle via apt, then use it to generate
+      # the wrapper jar at the pinned version. All subsequent
+      # steps use ./gradlew as normal.
+      - name: Bootstrap Gradle wrapper jar
+        run: |
+          set -e
+          GRADLE_VERSION="8.4"
 
-      # ── 5. Generate keystore (self-signed, bundled) ──────
-      - name: Generate keystore if missing
+          echo "Installing system Gradle via apt..."
+          sudo apt-get update -q
+          sudo apt-get install -y gradle
+
+          echo "System Gradle: $(gradle --version | head -1)"
+
+          echo "Generating wrapper jar for Gradle $GRADLE_VERSION..."
+          gradle wrapper \
+            --gradle-version "$GRADLE_VERSION" \
+            --distribution-type bin \
+            --project-dir .
+
+          echo "Wrapper jar ready:"
+          ls -lh gradle/wrapper/gradle-wrapper.jar
+
+          chmod +x gradlew
+
+      # ── 5. Generate keystore ─────────────────────────────
+      - name: Generate keystore
         run: |
           mkdir -p keystore
           if [ ! -f keystore/tvmusic.jks ]; then
@@ -78,29 +101,20 @@ jobs:
         run: |
           echo "=== Built APKs ==="
           find app/build/outputs/apk -name "*.apk" | sort
-          echo ""
           echo "=== File sizes ==="
           find app/build/outputs/apk -name "*.apk" -exec du -sh {} \;
 
-      # ── 9. Rename APKs for clarity ───────────────────────
+      # ── 9. Rename APKs ───────────────────────────────────
       - name: Rename APKs
         run: |
           mkdir -p release_apks
-          # arm64-v8a
-          ARM64=$(find app/build/outputs/apk/release -name "*arm64*" -o -name "*arm64-v8a*" | head -1)
-          if [ -n "$ARM64" ]; then
-            cp "$ARM64" release_apks/TVMusic-arm64-v8a.apk
-            echo "arm64 APK: $ARM64"
-          fi
-          # armeabi-v7a
-          ARM32=$(find app/build/outputs/apk/release -name "*armeabi*" | head -1)
-          if [ -n "$ARM32" ]; then
-            cp "$ARM32" release_apks/TVMusic-armeabi-v7a.apk
-            echo "arm32 APK: $ARM32"
-          fi
+          ARM64=$(find app/build/outputs/apk/release -name "*arm64-v8a*" | head -1)
+          [ -n "$ARM64" ] && cp "$ARM64" release_apks/TVMusic-arm64-v8a.apk && echo "arm64: $ARM64"
+          ARM32=$(find app/build/outputs/apk/release -name "*armeabi-v7a*" | head -1)
+          [ -n "$ARM32" ] && cp "$ARM32" release_apks/TVMusic-armeabi-v7a.apk && echo "arm32: $ARM32"
           ls -la release_apks/
 
-      # ── 10. Upload as workflow artifact ──────────────────
+      # ── 10. Upload artifacts ─────────────────────────────
       - name: Upload APKs as artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -108,7 +122,7 @@ jobs:
           path: release_apks/*.apk
           retention-days: 30
 
-      # ── 11. Create GitHub Release (only on tag push) ─────
+      # ── 11. GitHub Release (tag only) ────────────────────
       - name: Get version from tag
         if: startsWith(github.ref, 'refs/tags/')
         id: get_version
@@ -123,23 +137,14 @@ jobs:
           body: |
             ## TV音乐播放器 ${{ steps.get_version.outputs.VERSION }}
 
-            ### 下载说明
-            - **TVMusic-arm64-v8a.apk** — 适用于 64位 ARM 设备（大多数现代 Android TV）
-            - **TVMusic-armeabi-v7a.apk** — 适用于 32位 ARM 设备（旧款 Android TV）
-
-            ### 功能
-            - 📂 自动扫描内置存储和外部存储音频文件
-            - 🎨 显示封面图片、歌手、音质标签
-            - 🎵 支持 FLAC / MP3 / AAC / OGG / WAV / OPUS 等格式
-            - 📝 LRC 歌词同步显示
-            - ❤️ 收藏功能
-            - 📋 播放队列管理
-            - 🔍 实时搜索
-            - 👤 按艺术家分类
-            - 🎮 完整遥控器 D-Pad 焦点导航支持
+            ### 下载
+            | 文件 | 架构 | 适用 |
+            |------|------|------|
+            | `TVMusic-arm64-v8a.apk` | 64位 ARM | 现代 Android TV |
+            | `TVMusic-armeabi-v7a.apk` | 32位 ARM | 旧款 Android TV |
 
             ### 安装
-            ```
+            ```bash
             adb install TVMusic-arm64-v8a.apk
             ```
           files: |
@@ -150,7 +155,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # ── Optional: debug build for PRs ───────────────────────
+  # ── PR debug build ───────────────────────────────────────
   build-debug:
     name: Build Debug (PR check)
     runs-on: ubuntu-latest
@@ -168,8 +173,12 @@ jobs:
 
       - uses: android-actions/setup-android@v3
 
-      - name: Grant execute permission
-        run: chmod +x gradlew
+      - name: Bootstrap Gradle wrapper jar
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y gradle
+          gradle wrapper --gradle-version "8.4" --distribution-type bin --project-dir .
+          chmod +x gradlew
 
       - name: Generate keystore
         run: |
