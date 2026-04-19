@@ -40,6 +40,8 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Enable marquee scrolling for song title (replaces android:selected in XML)
+        binding.tvTitle.isSelected = true
         setupControls()
         observePlayback()
         observeLyrics()
