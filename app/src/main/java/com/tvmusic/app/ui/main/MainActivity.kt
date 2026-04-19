@@ -51,34 +51,34 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupSidebar() {
         // Set icons and labels
-        configNavButton(binding.navSongs,     R.drawable.ic_music_note,      "歌曲")
-        configNavButton(binding.navArtists,   R.drawable.ic_person,          "艺术家")
-        configNavButton(binding.navFavorites, R.drawable.ic_favorite_filled, "收藏")
-        configNavButton(binding.navQueue,     R.drawable.ic_queue_music,     "播放队列")
-        configNavButton(binding.navSearch,    R.drawable.ic_search,          "搜索")
+        configNavButton(binding.navSongs.root,     R.drawable.ic_music_note,      "歌曲")
+        configNavButton(binding.navArtists.root,   R.drawable.ic_person,          "艺术家")
+        configNavButton(binding.navFavorites.root, R.drawable.ic_favorite_filled, "收藏")
+        configNavButton(binding.navQueue.root,     R.drawable.ic_queue_music,     "播放队列")
+        configNavButton(binding.navSearch.root,    R.drawable.ic_search,          "搜索")
 
-        binding.navSongs.setOnClickListener     { navigateTo(NavItem.SONGS) }
-        binding.navArtists.setOnClickListener   { navigateTo(NavItem.ARTISTS) }
-        binding.navFavorites.setOnClickListener { navigateTo(NavItem.FAVORITES) }
-        binding.navQueue.setOnClickListener     { navigateTo(NavItem.QUEUE) }
-        binding.navSearch.setOnClickListener    { navigateTo(NavItem.SEARCH) }
+        binding.navSongs.root.setOnClickListener     { navigateTo(NavItem.SONGS) }
+        binding.navArtists.root.setOnClickListener   { navigateTo(NavItem.ARTISTS) }
+        binding.navFavorites.root.setOnClickListener { navigateTo(NavItem.FAVORITES) }
+        binding.navQueue.root.setOnClickListener     { navigateTo(NavItem.QUEUE) }
+        binding.navSearch.root.setOnClickListener    { navigateTo(NavItem.SEARCH) }
 
         // D-Pad vertical chain between nav items
-        binding.navSongs.nextFocusDownId      = R.id.navArtists
-        binding.navArtists.nextFocusUpId      = R.id.navSongs
-        binding.navArtists.nextFocusDownId    = R.id.navFavorites
-        binding.navFavorites.nextFocusUpId    = R.id.navArtists
-        binding.navFavorites.nextFocusDownId  = R.id.navQueue
-        binding.navQueue.nextFocusUpId        = R.id.navFavorites
-        binding.navQueue.nextFocusDownId      = R.id.navSearch
-        binding.navSearch.nextFocusUpId       = R.id.navQueue
+        binding.navSongs.root.nextFocusDownId      = R.id.navArtists
+        binding.navArtists.root.nextFocusUpId      = R.id.navSongs
+        binding.navArtists.root.nextFocusDownId    = R.id.navFavorites
+        binding.navFavorites.root.nextFocusUpId    = R.id.navArtists
+        binding.navFavorites.root.nextFocusDownId  = R.id.navQueue
+        binding.navQueue.root.nextFocusUpId        = R.id.navFavorites
+        binding.navQueue.root.nextFocusDownId      = R.id.navSearch
+        binding.navSearch.root.nextFocusUpId       = R.id.navQueue
 
         // D-Pad right → jump to content area
-        binding.navSongs.nextFocusRightId     = R.id.contentFragment
-        binding.navArtists.nextFocusRightId   = R.id.contentFragment
-        binding.navFavorites.nextFocusRightId = R.id.contentFragment
-        binding.navQueue.nextFocusRightId     = R.id.contentFragment
-        binding.navSearch.nextFocusRightId    = R.id.contentFragment
+        binding.navSongs.root.nextFocusRightId     = R.id.contentFragment
+        binding.navArtists.root.nextFocusRightId   = R.id.contentFragment
+        binding.navFavorites.root.nextFocusRightId = R.id.contentFragment
+        binding.navQueue.root.nextFocusRightId     = R.id.contentFragment
+        binding.navSearch.root.nextFocusRightId    = R.id.contentFragment
 
         // Mini player updates
         lifecycleScope.launch {
@@ -117,16 +117,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSidebarSelection(item: NavItem) {
         listOf(
-            binding.navSongs, binding.navArtists,
-            binding.navFavorites, binding.navQueue, binding.navSearch
+            binding.navSongs.root, binding.navArtists.root,
+            binding.navFavorites.root, binding.navQueue.root, binding.navSearch.root
         ).forEach { it.isSelected = false }
 
         when (item) {
-            NavItem.SONGS -> binding.navSongs.isSelected = true
-            NavItem.ARTISTS -> binding.navArtists.isSelected = true
-            NavItem.FAVORITES -> binding.navFavorites.isSelected = true
-            NavItem.QUEUE -> binding.navQueue.isSelected = true
-            NavItem.SEARCH -> binding.navSearch.isSelected = true
+            NavItem.SONGS -> binding.navSongs.root.isSelected = true
+            NavItem.ARTISTS -> binding.navArtists.root.isSelected = true
+            NavItem.FAVORITES -> binding.navFavorites.root.isSelected = true
+            NavItem.QUEUE -> binding.navQueue.root.isSelected = true
+            NavItem.SEARCH -> binding.navSearch.root.isSelected = true
         }
     }
 
