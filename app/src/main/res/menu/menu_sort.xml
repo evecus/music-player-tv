@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/sort_title_asc"   android:title="标题 A→Z" />
+    <item android:id="@+id/sort_title_desc"  android:title="标题 Z→A" />
+    <item android:id="@+id/sort_artist"      android:title="按艺术家" />
+    <item android:id="@+id/sort_album"       android:title="按专辑" />
+    <item android:id="@+id/sort_date_new"    android:title="最新添加" />
+    <item android:id="@+id/sort_date_old"    android:title="最早添加" />
+    <item android:id="@+id/sort_duration_long" android:title="时长最长" />
+    <item android:id="@+id/sort_size"        android:title="文件大小" />
+</menu>

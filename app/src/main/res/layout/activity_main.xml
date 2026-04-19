@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/bg_primary">
+
+    <!-- ── Sidebar Navigation ── -->
+    <LinearLayout
+        android:id="@+id/sidebar"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/sidebar_bg"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:elevation="4dp">
+
+        <!-- App logo / title -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="24dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_music_note"
+                android:tint="@color/accent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TV音乐"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Nav: Songs -->
+        <include layout="@layout/item_nav_button"
+            android:id="@+id/navSongs" />
+
+        <!-- Nav: Artists -->
+        <include layout="@layout/item_nav_button"
+            android:id="@+id/navArtists" />
+
+        <!-- Nav: Favorites -->
+        <include layout="@layout/item_nav_button"
+            android:id="@+id/navFavorites" />
+
+        <!-- Nav: Queue -->
+        <include layout="@layout/item_nav_button"
+            android:id="@+id/navQueue" />
+
+        <!-- Nav: Search -->
+        <include layout="@layout/item_nav_button"
+            android:id="@+id/navSearch" />
+
+        <View android:layout_width="0dp" android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Mini player info at bottom of sidebar -->
+        <LinearLayout
+            android:id="@+id/miniPlayer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp"
+            android:background="@color/mini_player_bg">
+
+            <TextView
+                android:id="@+id/miniTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="未在播放"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:singleLine="true"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/miniArtist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:singleLine="true"
+                android:ellipsize="end" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ── Main Content ── -->
+    <FrameLayout
+        android:id="@+id/contentFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+</LinearLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ── Brand ── -->
+    <color name="accent">#1565C0</color>           <!-- deep blue accent -->
+    <color name="accent_light">#42A5F5</color>
+    <color name="accent_dark">#0D47A1</color>
+
+    <!-- ── Background ── -->
+    <color name="bg_primary">#F5F6FA</color>        <!-- main content bg -->
+    <color name="sidebar_bg">#FFFFFF</color>        <!-- sidebar white -->
+    <color name="header_bg">#FFFFFF</color>
+    <color name="player_bg">#FFFFFF</color>
+    <color name="player_right_bg">#FAFBFD</color>
+    <color name="mini_player_bg">#F0F2F8</color>
+    <color name="cover_placeholder_bg">#E8EAF0</color>
+    <color name="card_bg">#FFFFFF</color>
+
+    <!-- ── Text ── -->
+    <color name="text_primary">#1A1A2E</color>      <!-- near-black -->
+    <color name="text_secondary">#5A6070</color>
+    <color name="text_tertiary">#9EA8B8</color>
+    <color name="text_on_accent">#FFFFFF</color>
+
+    <!-- ── Nav ── -->
+    <color name="nav_icon_color">#5A6070</color>
+    <color name="nav_text_color">#1A1A2E</color>
+    <color name="nav_selected_bg">#E8F0FE</color>
+    <color name="nav_selected_icon">#1565C0</color>
+    <color name="nav_selected_text">#1565C0</color>
+
+    <!-- ── Focus highlight ── -->
+    <color name="focus_border">#1565C0</color>
+    <color name="focus_bg">#EBF2FF</color>
+    <color name="selected_bg">#D2E4FF</color>
+
+    <!-- ── Divider ── -->
+    <color name="divider">#E8EAF0</color>
+
+    <!-- ── Quality badge colors ── -->
+    <color name="quality_lossless">#2E7D32</color>  <!-- green -->
+    <color name="quality_high">#1565C0</color>      <!-- blue -->
+    <color name="quality_mid">#E65100</color>       <!-- orange -->
+    <color name="quality_low">#757575</color>       <!-- gray -->
+
+    <!-- ── Player ── -->
+    <color name="play_btn_bg">#1565C0</color>
+    <color name="ctrl_btn_bg">#F0F2F8</color>
+    <color name="seekbar_progress">#1565C0</color>
+</resources>

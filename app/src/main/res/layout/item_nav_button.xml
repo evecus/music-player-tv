@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="@drawable/bg_nav_item">
+
+    <ImageView
+        android:id="@+id/navIcon"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/ic_music_note"
+        android:tint="@color/nav_icon_color" />
+
+    <TextView
+        android:id="@+id/navLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="歌曲"
+        android:textColor="@color/nav_text_color"
+        android:textSize="14sp"
+        android:layout_marginStart="12dp" />
+
+</LinearLayout>

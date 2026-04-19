@@ -1,0 +1,138 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+
+android {
+    namespace 'com.tvmusic.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.tvmusic.app"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+    }
+
+    signingConfigs {
+        release {
+            // Self-signed keystore bundled in repo for CI builds
+            // Generated with: keytool -genkey -v -keystore tvmusic.jks -alias tvmusic
+            //   -keyalg RSA -keysize 2048 -validity 10000
+            storeFile file('../keystore/tvmusic.jks')
+            storePassword 'tvmusic123'
+            keyAlias 'tvmusic'
+            keyPassword 'tvmusic123'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            applicationIdSuffix ".debug"
+        }
+    }
+
+    // Build separate APKs for arm64 and arm32
+    splits {
+        abi {
+            enable true
+            reset()
+            include "arm64-v8a", "armeabi-v7a"
+            universalApk false
+        }
+    }
+
+    // Version codes per ABI
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def abiFilter = output.getFilter(com.android.build.OutputFile.ABI)
+            if (abiFilter != null) {
+                def abiVersionCode = ['armeabi-v7a': 1, 'arm64-v8a': 2]
+                output.versionCodeOverride =
+                    abiVersionCode.get(abiFilter, 0) * 1000 + variant.versionCode
+                output.outputFileName =
+                    "TVMusic-${variant.versionName}-${abiFilter}.apk"
+            }
+        }
+    }
+
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/LICENSE*', 'META-INF/NOTICE*']
+        }
+    }
+}
+
+dependencies {
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+
+    // AndroidX Core
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.fragment:fragment-ktx:1.6.2'
+    implementation 'androidx.activity:activity-ktx:1.8.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+
+    // Android TV / Leanback
+    implementation 'androidx.leanback:leanback:1.2.0-alpha04'
+    implementation 'androidx.tvprovider:tvprovider:1.1.0-alpha01'
+
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    // Media3 (ExoPlayer)
+    implementation 'androidx.media3:media3-exoplayer:1.3.0'
+    implementation 'androidx.media3:media3-session:1.3.0'
+    implementation 'androidx.media3:media3-ui:1.3.0'
+    implementation 'androidx.media3:media3-common:1.3.0'
+
+    // Room Database
+    implementation 'androidx.room:room-runtime:2.6.1'
+    implementation 'androidx.room:room-ktx:2.6.1'
+    kapt 'androidx.room:room-compiler:2.6.1'
+
+    // RecyclerView & CardView
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Image Loading (Glide)
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    kapt 'com.github.bumptech.glide:compiler:4.16.0'
+
+    // Palette for color extraction from album art
+    implementation 'androidx.palette:palette-ktx:1.0.0'
+
+    // Material Design (limited use for TV)
+    implementation 'com.google.android.material:material:1.11.0'
+
+    // Preference
+    implementation 'androidx.preference:preference-ktx:1.2.1'
+}

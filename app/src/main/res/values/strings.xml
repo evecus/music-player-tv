@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TV音乐</string>
+    <string name="nav_songs">歌曲</string>
+    <string name="nav_artists">艺术家</string>
+    <string name="nav_favorites">收藏</string>
+    <string name="nav_queue">播放队列</string>
+    <string name="nav_search">搜索</string>
+    <string name="now_playing">正在播放</string>
+    <string name="no_song_playing">未在播放</string>
+    <string name="no_lyrics">暂无歌词</string>
+    <string name="unknown_artist">未知艺术家</string>
+    <string name="unknown_album">未知专辑</string>
+    <string name="add_to_queue">添加到队列</string>
+    <string name="toggle_favorite">收藏 / 取消收藏</string>
+    <string name="sort_title">排序方式</string>
+    <string name="permission_required">需要存储权限才能扫描音乐文件</string>
+    <string name="scanning">正在扫描音乐库…</string>
+</resources>

@@ -1,0 +1,194 @@
+name: Build & Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Version name (e.g. 1.0.0)'
+        required: false
+        default: 'dev'
+
+jobs:
+  build:
+    name: Build APKs (arm64 + arm32)
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. JDK 17 ────────────────────────────────────────
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      # ── 3. Android SDK ───────────────────────────────────
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # ── 4. Grant execute permission ──────────────────────
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # ── 5. Generate keystore (self-signed, bundled) ──────
+      - name: Generate keystore if missing
+        run: |
+          mkdir -p keystore
+          if [ ! -f keystore/tvmusic.jks ]; then
+            keytool -genkey -v \
+              -keystore keystore/tvmusic.jks \
+              -alias tvmusic \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -storepass tvmusic123 \
+              -keypass tvmusic123 \
+              -dname "CN=TVMusic, OU=Dev, O=TVMusic, L=CN, S=CN, C=CN"
+            echo "Keystore generated"
+          else
+            echo "Keystore already exists"
+          fi
+
+      # ── 6. Cache Gradle ──────────────────────────────────
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # ── 7. Build Release APKs ────────────────────────────
+      - name: Build Release APKs
+        run: ./gradlew assembleRelease --stacktrace
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx4g"
+
+      # ── 8. List built APKs ───────────────────────────────
+      - name: List APK outputs
+        run: |
+          echo "=== Built APKs ==="
+          find app/build/outputs/apk -name "*.apk" | sort
+          echo ""
+          echo "=== File sizes ==="
+          find app/build/outputs/apk -name "*.apk" -exec du -sh {} \;
+
+      # ── 9. Rename APKs for clarity ───────────────────────
+      - name: Rename APKs
+        run: |
+          mkdir -p release_apks
+          # arm64-v8a
+          ARM64=$(find app/build/outputs/apk/release -name "*arm64*" -o -name "*arm64-v8a*" | head -1)
+          if [ -n "$ARM64" ]; then
+            cp "$ARM64" release_apks/TVMusic-arm64-v8a.apk
+            echo "arm64 APK: $ARM64"
+          fi
+          # armeabi-v7a
+          ARM32=$(find app/build/outputs/apk/release -name "*armeabi*" | head -1)
+          if [ -n "$ARM32" ]; then
+            cp "$ARM32" release_apks/TVMusic-armeabi-v7a.apk
+            echo "arm32 APK: $ARM32"
+          fi
+          ls -la release_apks/
+
+      # ── 10. Upload as workflow artifact ──────────────────
+      - name: Upload APKs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TVMusic-APKs
+          path: release_apks/*.apk
+          retention-days: 30
+
+      # ── 11. Create GitHub Release (only on tag push) ─────
+      - name: Get version from tag
+        if: startsWith(github.ref, 'refs/tags/')
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          name: "TV音乐 ${{ steps.get_version.outputs.VERSION }}"
+          body: |
+            ## TV音乐播放器 ${{ steps.get_version.outputs.VERSION }}
+
+            ### 下载说明
+            - **TVMusic-arm64-v8a.apk** — 适用于 64位 ARM 设备（大多数现代 Android TV）
+            - **TVMusic-armeabi-v7a.apk** — 适用于 32位 ARM 设备（旧款 Android TV）
+
+            ### 功能
+            - 📂 自动扫描内置存储和外部存储音频文件
+            - 🎨 显示封面图片、歌手、音质标签
+            - 🎵 支持 FLAC / MP3 / AAC / OGG / WAV / OPUS 等格式
+            - 📝 LRC 歌词同步显示
+            - ❤️ 收藏功能
+            - 📋 播放队列管理
+            - 🔍 实时搜索
+            - 👤 按艺术家分类
+            - 🎮 完整遥控器 D-Pad 焦点导航支持
+
+            ### 安装
+            ```
+            adb install TVMusic-arm64-v8a.apk
+            ```
+          files: |
+            release_apks/TVMusic-arm64-v8a.apk
+            release_apks/TVMusic-armeabi-v7a.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── Optional: debug build for PRs ───────────────────────
+  build-debug:
+    name: Build Debug (PR check)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Generate keystore
+        run: |
+          mkdir -p keystore
+          keytool -genkey -v \
+            -keystore keystore/tvmusic.jks \
+            -alias tvmusic \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass tvmusic123 -keypass tvmusic123 \
+            -dname "CN=TVMusic, OU=Dev, O=TVMusic, L=CN, S=CN, C=CN"
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx4g"
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TVMusic-Debug
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 7

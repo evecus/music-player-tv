@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Focused (D-Pad highlight) -->
+    <item android:state_focused="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="@color/focus_bg" />
+                </shape>
+            </item>
+            <!-- Left accent bar -->
+            <item android:width="4dp" android:gravity="left">
+                <shape>
+                    <solid android:color="@color/focus_border" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- Activated = focused via code -->
+    <item android:state_activated="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="@color/focus_bg" />
+                </shape>
+            </item>
+            <item android:width="4dp" android:gravity="left">
+                <shape>
+                    <solid android:color="@color/focus_border" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- Selected (currently playing in queue) -->
+    <item android:state_selected="true">
+        <shape>
+            <solid android:color="@color/selected_bg" />
+        </shape>
+    </item>
+
+    <!-- Pressed -->
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/focus_bg" />
+        </shape>
+    </item>
+
+    <!-- Normal -->
+    <item>
+        <shape>
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+</selector>

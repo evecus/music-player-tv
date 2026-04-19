@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- PopupMenu style -->
+    <style name="TVMusicPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- SeekBar -->
+    <style name="TVMusicSeekBar" parent="Widget.AppCompat.SeekBar">
+        <item name="android:progressTint">@color/accent</item>
+        <item name="android:thumbTint">@color/accent</item>
+        <item name="android:progressBackgroundTint">@color/divider</item>
+    </style>
+
+    <!-- Button -->
+    <style name="TVMusicButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/bg_outline_btn</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:focusable">true</item>
+    </style>
+</resources>

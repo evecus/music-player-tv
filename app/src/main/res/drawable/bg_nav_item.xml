@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Selected (active nav item) -->
+    <item android:state_selected="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="@color/nav_selected_bg" />
+                    <corners android:radius="8dp" />
+                </shape>
+            </item>
+            <!-- Right accent bar -->
+            <item android:width="3dp" android:gravity="right">
+                <shape>
+                    <solid android:color="@color/accent" />
+                    <corners android:topRightRadius="8dp" android:bottomRightRadius="8dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- Focused -->
+    <item android:state_focused="true">
+        <shape>
+            <solid android:color="@color/focus_bg" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <!-- Pressed -->
+    <item android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/nav_selected_bg" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <!-- Normal -->
+    <item>
+        <shape>
+            <solid android:color="@android:color/transparent" />
+        </shape>
+    </item>
+</selector>
